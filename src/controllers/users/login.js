@@ -18,12 +18,10 @@ module.exports = {
         const email = user.email;
         const plainPass = data.password;
         const hashedPass = await getPassByEmail(data.email);
-
         const passwordMatch = await validatePassword(
             plainPass,
             hashedPass.password
         );
-
         if (!email) {
             throw invalidCredentials();
         }

@@ -1,6 +1,7 @@
 "use strict";
 
 require("dotenv").config();
+const addData = require("./add-data");
 const { createPool } = require("./mysql-connection");
 
 const DATABASE_NAME = process.env.MYSQL_DATABASE;
@@ -16,6 +17,9 @@ const dbInit = async () => {
     await pool.query(`USE ${DATABASE_NAME}`);
     console.log("Database created successfuly");
     await createTables(pool);
+    console.log("Tables created");
+    await addData(pool);
+    console.log("Data added");
     console.log("All done");
     await pool.end();
 };
@@ -33,8 +37,8 @@ async function createTables(pool) {
             country VARCHAR(255),
             avatarUrl VARCHAR(255),
             gender ENUM('Male', 'Female', 'Non-Binary'),
-            role ENUM('couple', 'user'),
-            admin TINYINT(1) DEFAULT 0,
+            role ENUM('couple', 'user') DEFAULT 'user',
+            admin BOOLEAN DEFAULT false NOT NULL,
             acceptedTOS BOOLEAN NOT NULL,
             createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             modifiedAt TIMESTAMP
@@ -44,7 +48,7 @@ async function createTables(pool) {
 ¿Es necesario el "role"? 
 */
     await pool.query(`
-        CREATE TABLE IF NOT EXISTS weddings (
+        CREATE TABLE IF NOT EXISTS weddings(
             id CHAR(36) PRIMARY KEY,
             idUser1 CHAR(36) NOT NULL,
             idUser2 CHAR(36) NOT NULL,
@@ -59,11 +63,11 @@ async function createTables(pool) {
     await pool.query(`
         CREATE TABLE IF NOT EXISTS photos(
             id CHAR(36) PRIMARY KEY,
-            idWedding(36) NOT NULL,
+            idWedding CHAR(36) NOT NULL,
             photoURL VARCHAR(255) NOT NULL,
-            createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (idWedding) REFERENCES weddings(id)
-        )
+        );
     `);
 }
 
