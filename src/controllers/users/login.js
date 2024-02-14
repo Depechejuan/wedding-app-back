@@ -15,16 +15,16 @@ const {
 module.exports = {
     async login(data) {
         const user = await getUserByEmail(data.email);
-        const email = user.email;
+        if (!user) {
+            throw invalidCredentials();
+        }
         const plainPass = data.password;
         const hashedPass = await getPassByEmail(data.email);
         const passwordMatch = await validatePassword(
             plainPass,
             hashedPass.password
         );
-        if (!email) {
-            throw invalidCredentials();
-        }
+
         if (!passwordMatch) {
             throw invalidCredentials();
         }

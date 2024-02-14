@@ -5,7 +5,6 @@ module.exports = {
     async getUserByEmail(email) {
         const statement = `SELECT * FROM users WHERE users.email = ?`;
         const [rows] = await db.execute(statement, [email]);
-        console.log(rows);
         return rows[0];
     },
 

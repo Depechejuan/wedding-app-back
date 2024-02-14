@@ -14,10 +14,10 @@ module.exports = {
     async register(data) {
         const alreadyReg = await getUserByEmail(data.email);
         if (alreadyReg) {
-            emailAlreadyRegistered();
+            throw emailAlreadyRegistered();
         }
         if (!data.acceptedTOS) {
-            didNotAcceptedTOS();
+            throw didNotAcceptedTOS();
         }
 
         const hashedPass = await hashPassword(data.password);
@@ -31,7 +31,6 @@ module.exports = {
         await saveUser(user);
 
         return {
-            success: true,
             user,
         };
     },

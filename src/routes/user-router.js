@@ -22,11 +22,6 @@ const { generateUUID } = require("../services/crypto-services");
 
 const router = Router();
 
-router.post("/", json(), async (req, res) => {
-    console.log("Bienvenido a la Juangy Boda!");
-    sendResponse(res);
-});
-
 router.post("/register", json(), async (req, res) => {
     try {
         const result = await register(req.body);
@@ -37,18 +32,12 @@ router.post("/register", json(), async (req, res) => {
 });
 
 router.post("/login", json(), async (req, res) => {
-    console.log("login");
     try {
         const token = await login(req.body);
         sendResponse(res, token);
     } catch (err) {
-        sendResponse(res, err);
+        sendError(res, err);
     }
-});
-
-router.get("/test", async (req, res) => {
-    console.log("Its working...");
-    sendResponse(res);
 });
 
 router.get("/wedding/create", authGuard, async (req, res) => {
