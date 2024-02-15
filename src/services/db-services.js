@@ -44,7 +44,7 @@ module.exports = {
         INSERT INTO weddings(id, weddingCode, idUser1, idUser2, weddingDate)
         VALUES (?, ?, ?, ?, ?)
         `;
-        const [rows] = await db.execute(statement, [
+        await db.execute(statement, [
             data.id,
             data.weddingCode,
             data.idUser1,

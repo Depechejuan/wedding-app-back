@@ -1,8 +1,5 @@
 "use strict";
 
-const { sendError } = require("../utils/send-error");
-const { sendResponse } = require("../utils/send-response");
-
 module.exports = {
     genericError() {
         return {
