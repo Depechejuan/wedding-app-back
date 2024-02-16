@@ -1,3 +1,4 @@
+const { generateUUID } = require("../../services/crypto-services");
 const {
     checkWedding,
     createWeddingCode,
@@ -5,21 +6,15 @@ const {
 const { weddingAlreadyCreated } = require("../../services/error-services");
 const { generateQR } = require("../../services/generate-qr");
 module.exports = {
-    async createWedding(id) {
-        console.log(":)");
-        console.log(id);
-
+    async createWedding(idUser1, idUser2, weddingDate) {
         const QR = await generateQR();
-        console.log(QR);
 
         const obj = {
-            id: generateUUID(),
-            weddingCode: QR,
-            idUser1: req.currentuser.id,
-            idUser2: partnerMail.id,
-            weddingDate: data.date,
+            id: QR,
+            idUser1: idUser1,
+            idUser2: idUser2,
+            weddingDate,
         };
-
         await createWeddingCode(obj);
         return obj;
     },

@@ -45,8 +45,8 @@ async function createTables(pool) {
         );
     `);
     /*
-¿Es necesario el "role"? 
-*/
+        ¿Es necesario el "role"? 
+    */
     await pool.query(`
         CREATE TABLE IF NOT EXISTS weddings(
             id CHAR(36) PRIMARY KEY,

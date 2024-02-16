@@ -14,13 +14,14 @@ const authGuard = require("../middlewares/auth-guard");
 const {
     getUserByEmail,
     createWeddingCode,
-    checkWedding,
     getUserById,
     weddingData,
+    getWeddingPics,
 } = require("../services/db-services");
 const { generateUUID } = require("../services/crypto-services");
 const { createWedding } = require("../controllers/users/create-wedding");
 const { checkPartner } = require("../controllers/users/check-partner");
+const { registerForce } = require("../controllers/users/register-force");
 
 const router = Router();
 
@@ -64,31 +65,52 @@ router.get("/controlpanel", authGuard, json(), async (req, res) => {
     }
 });
 
-router.get("/wedding/create", authGuard, async (req, res) => {
+router.get("/controlpanel/getwedding", authGuard, async (req, res) => {
     try {
-        console.log(req.currentuser.id);
-        await checkWedding(req.currentuser.id);
+        console.log("hola");
+        const check = await weddingData(req.currentuser.id);
+        let nowedding;
+        if (!check) {
+            nowedding = "¡No has creado una boda aún!";
+            sendResponse(res, nowedding);
+            return;
+        }
 
-        await checkPartner(req.body);
-        const partnerMail = await getUserByEmail(data.partner);
+        if (check) {
+            // Revisar cuando solucionemos el registro del compañero
+            console.log(check.id);
+            const data = await getWeddingPics(check.id);
+            sendResponse(res, data);
+        }
+    } catch (err) {
+        sendError(res, err);
+    }
+});
 
-        const wedding = await createWedding(req.currentuser.id);
+router.post("/controlpanel/create", authGuard, async (req, res) => {
+    try {
+        console.log("¿Existe ya la boda?");
+        await weddingData(req.currentuser.id);
+        const partner = await checkPartner(req.body.email);
+        if (!partner) {
+            console.log("register user invited");
+            await registerForce(req.body.email);
+        }
 
-        // if (!partnerMail) {
-        //     const errorResponse = partnerNotRegistered();
-        //     await sendInvite(data);
-        //     sendError(res, errorResponse);
-        //     return;
-        // }
+        const wedding = await createWedding(
+            req.currentuser.id,
+            partner.id,
+            req.body.weddingDate
+        );
 
-        const idWedding = await checkWedding(req.currentuser.id);
-        sendResponse(res, wedding, idWedding);
+        sendResponse(res, wedding);
     } catch (err) {
         sendError(res, err);
     }
 });
 
 router.get("/user/:id", authGuard, async (req, res) => {
+    // see other users
     sendResponse(res);
 });
 

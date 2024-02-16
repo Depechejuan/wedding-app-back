@@ -41,24 +41,22 @@ module.exports = {
 
     async createWeddingCode(data) {
         const statement = `
-        INSERT INTO weddings(id, weddingCode, idUser1, idUser2, weddingDate)
-        VALUES (?, ?, ?, ?, ?)
+        INSERT INTO weddings(id, idUser1, idUser2, weddingDate)
+        VALUES (?, ?, ?, ?)
         `;
         await db.execute(statement, [
             data.id,
-            data.weddingCode,
             data.idUser1,
             data.idUser2,
             data.weddingDate,
         ]);
     },
 
-    async checkWedding(id) {
+    async getWeddingPics(id) {
         const statement = `
-            SELECT weddings.id
-            FROM weddings
-            INNER JOIN users ON weddings.idUser1 = users.id OR weddings.idUser2 = users.id
-            WHERE users.id = ?;
+            SELECT *
+            FROM photos
+            WHERE idWedding = ?;
         `;
         const [rows] = await db.execute(statement, [id]);
         return rows[0];
@@ -66,7 +64,7 @@ module.exports = {
 
     async weddingData(id) {
         const statement = `
-        SELECT * FROM weddings WHERE id = ?
+        SELECT * FROM weddings WHERE idUser1 OR idUser2 = ? 
         `;
         const [rows] = await db.execute(statement, [id]);
         return rows[0];
