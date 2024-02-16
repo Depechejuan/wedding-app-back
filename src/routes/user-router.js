@@ -91,12 +91,11 @@ router.post("/controlpanel/create", authGuard, async (req, res) => {
     try {
         console.log("¿Existe ya la boda?");
         await weddingData(req.currentuser.id);
-        const partner = await checkPartner(req.body.email);
+        let partner = await checkPartner(req.body.email);
         if (!partner) {
             console.log("register user invited");
-            await registerForce(req.body.email);
+            partner = await registerForce(req.body.email);
         }
-
         const wedding = await createWedding(
             req.currentuser.id,
             partner.id,

@@ -20,5 +20,6 @@ module.exports = {
             acceptedTOS: false,
         };
         await saveUser(user);
+        return user;
     },
 };
