@@ -3,22 +3,14 @@
 const { Router, json } = require("express");
 const { register } = require("../controllers/users/register");
 const { sendResponse } = require("../utils/send-response");
-const {
-    partnerNotRegistered,
-    weddingAlreadyCreated,
-} = require("../services/error-services");
 const { sendError } = require("../utils/send-error");
 const { login } = require("../controllers/users/login");
 const authGuard = require("../middlewares/auth-guard");
-
 const {
-    getUserByEmail,
-    createWeddingCode,
     getUserById,
     weddingData,
     getWeddingPics,
 } = require("../services/db-services");
-const { generateUUID } = require("../services/crypto-services");
 const { createWedding } = require("../controllers/users/create-wedding");
 const { checkPartner } = require("../controllers/users/check-partner");
 const { registerForce } = require("../controllers/users/register-force");
@@ -89,9 +81,14 @@ router.get("/controlpanel", authGuard, json(), async (req, res) => {
         if (wedding !== undefined) {
             info.push(wedding);
         }
+        if (wedding) {
+            const qrFile = { QR: `../../public/qrcodes/${wedding.id}` };
+            info.push(qrFile);
+        }
         if (photos !== undefined) {
             info.push(photos);
         }
+
         sendResponse(res, info);
     } catch (err) {
         sendError(res, err);
