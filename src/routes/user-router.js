@@ -43,28 +43,62 @@ router.post("/login", json(), async (req, res) => {
     }
 });
 
-router.get("/controlpanel", authGuard, json(), async (req, res) => {
+/*
+    This endpoints manage:
+    - Check if there's an existing entry "wedding" under your ID
+    - If the partner is not register, makes a force register with a generic pass. (TODO: Send email to invited to activate account)
+    - Creates the entry on the wedding database in order to be able to upload photos.
+    
+*/
+
+router.post("/controlpanel/create", authGuard, async (req, res) => {
     try {
-        console.log("Empezamos CP");
-        const idUser = req.currentuser.id;
-        console.log(idUser);
-        const user = await getUserById(idUser);
-        const idWedding = await checkWedding(idUser);
-        if (!idWedding) {
-            console.log("No hay wedding!");
-            sendResponse(res, user);
+        const checkWedding = await weddingData(req.currentuser.id);
+        if (checkWedding) {
+            sendResponse(res, checkWedding);
             return;
         }
-        const wedding = await weddingData(idWedding.id);
-        const info = [user, wedding];
+        let partner = await checkPartner(req.body.email);
+        if (!partner) {
+            console.log("register user invited");
+            partner = await registerForce(req.body.email);
+        }
+        const wedding = await createWedding(
+            req.currentuser.id,
+            partner.id,
+            req.body.weddingDate
+        );
 
-        // ADD INFO TO SENDRESPONSE
+        sendResponse(res, wedding);
+    } catch (err) {
+        sendError(res, err);
+    }
+});
+
+router.get("/controlpanel", authGuard, json(), async (req, res) => {
+    try {
+        console.log("Accediendo al Control Panel del usuario");
+        const idUser = req.currentuser.id;
+        const user = await getUserById(idUser);
+        const wedding = await weddingData(user.id);
+        let photos;
+        if (wedding) {
+            photos = await getWeddingPics(wedding.id);
+        }
+        const info = [user];
+        if (wedding !== undefined) {
+            info.push(wedding);
+        }
+        if (photos !== undefined) {
+            info.push(photos);
+        }
         sendResponse(res, info);
     } catch (err) {
         sendError(res, err);
     }
 });
 
+// pointless?
 router.get("/controlpanel/getwedding", authGuard, async (req, res) => {
     try {
         console.log("hola");
@@ -82,27 +116,6 @@ router.get("/controlpanel/getwedding", authGuard, async (req, res) => {
             const data = await getWeddingPics(check.id);
             sendResponse(res, data);
         }
-    } catch (err) {
-        sendError(res, err);
-    }
-});
-
-router.post("/controlpanel/create", authGuard, async (req, res) => {
-    try {
-        console.log("¿Existe ya la boda?");
-        await weddingData(req.currentuser.id);
-        let partner = await checkPartner(req.body.email);
-        if (!partner) {
-            console.log("register user invited");
-            partner = await registerForce(req.body.email);
-        }
-        const wedding = await createWedding(
-            req.currentuser.id,
-            partner.id,
-            req.body.weddingDate
-        );
-
-        sendResponse(res, wedding);
     } catch (err) {
         sendError(res, err);
     }

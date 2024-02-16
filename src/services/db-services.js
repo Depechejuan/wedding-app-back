@@ -17,7 +17,7 @@ module.exports = {
 
     async getUserById(idUser) {
         const statement = `
-        SELECT id, firstName, lastName, email, birthDate, city, country, avatarUrl, gender, role
+        SELECT id, email, firstName, lastName, birthDate, city, country, avatarUrl, gender, role
         FROM users
         WHERE id = ?`;
         const [rows] = await db.execute(statement, [idUser]);
@@ -64,9 +64,9 @@ module.exports = {
 
     async weddingData(id) {
         const statement = `
-        SELECT * FROM weddings WHERE idUser1 OR idUser2 = ? 
+            SELECT * FROM weddings WHERE idUser1 = ? OR idUser2 = ? 
         `;
-        const [rows] = await db.execute(statement, [id]);
+        const [rows] = await db.execute(statement, [id, id]);
         return rows[0];
     },
 
