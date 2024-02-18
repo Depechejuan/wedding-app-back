@@ -82,7 +82,7 @@ router.get("/controlpanel", authGuard, json(), async (req, res) => {
             info.push(wedding);
         }
         if (wedding) {
-            const qrFile = { QR: `../../public/qrcodes/${wedding.id}` };
+            const qrFile = { QR: `public/qrcodes/${wedding.id}` };
             info.push(qrFile);
         }
         if (photos !== undefined) {

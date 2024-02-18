@@ -11,45 +11,39 @@ const softAuth = require("../middlewares/soft-auth");
 const { sendPhotos } = require("../controllers/guests/send-photo");
 const router = Router();
 
-// to use only on DepecheJuan wedding
-router.post("/depeche", json(), upload.array("photo", 3), async (req, res) => {
-    console.log("Subiendo la foto a la JuangyBoda!");
-    try {
-        const data = req.body;
-        const wedding = data.WEDDING || "test";
-        const user = data.USER_WEDDING || "paco";
-        const photos = req.files;
+/*
+    add a "soft-guard" for a little security, where if:
+        ID_WEDDIG from LocalStorage is = to req.params.id = ok
+    also, checking that USER_WEDDING exists in order to be able to known witch user is uploading
+    LocalStorage Data will be inserted in front-end
 
-        const sendFile = await sendPhotos(wedding, user, photos[0]);
+*/
+router.post(
+    "/wedding/:id",
+    json(),
+    upload.array("photo", 3),
+    async (req, res) => {
+        console.log("!");
+        try {
+            // Uncomment this line below when front-end is ready
+            // const data = req.body;
 
-        sendResponse(res, sendFile);
-    } catch (err) {
-        console.error(err);
-        sendError(res, err);
+            const wedding = req.params.id;
+            console.log(wedding);
+            const user = "test_user";
+            // This code is the real one, when front end is ready.
+            // const user = data.USER_WEDDING || "test_user";
+            console.log(user);
+            const photos = req.files;
+
+            const sendFile = await sendPhotos(wedding, user, photos[0]);
+
+            sendResponse(res, sendFile);
+        } catch (err) {
+            console.error(err);
+            sendError(res, err);
+        }
     }
-});
-
-// router.post(
-//     "/wedding/:id/upload",
-//     softAuth,
-//     json(),
-//     upload.array("photo", 1),
-//     async (req, res) => {
-//         try {
-//             console.log("hola");
-//             const data = req.body;
-//             console.log(data);
-//             const wedding = data.WEDDING;
-//             const user = data.USER_WEDDING;
-//             const photo = req.file;
-//             console.log(photo);
-//             const sendPhoto = await sendPhoto(wedding, user, photo);
-//             sendResponse(res, sendPhoto);
-//         } catch (err) {
-//             console.error(err);
-//             sendError(res, err);
-//         }
-//     }
-// );
+);
 
 module.exports = router;

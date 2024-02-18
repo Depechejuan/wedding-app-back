@@ -70,6 +70,20 @@ module.exports = {
         return rows[0];
     },
 
+    async savePhoto(idPhoto, idWedding, photoURL) {
+        const statement = `
+            INSERT INTO photos(id, idWedding, photoURL)
+            VALUES(?, ?, ?)
+        `;
+
+        const [rows] = await db.execute(statement, [
+            idPhoto,
+            idWedding,
+            photoURL,
+        ]);
+        return rows;
+    },
+
     // revisar logica
     async editUser(idUser, data) {
         const statement = `

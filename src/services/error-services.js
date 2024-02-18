@@ -82,4 +82,13 @@ module.exports = {
             message: "This resource already exists",
         };
     },
+
+    savePhotoError() {
+        return {
+            success: false,
+            status: 417,
+            code: "PHOTO_ERROR",
+            message: "The server couldn't process the request properly.",
+        };
+    },
 };
