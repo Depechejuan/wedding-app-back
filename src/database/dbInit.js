@@ -25,6 +25,7 @@ const dbInit = async () => {
 };
 
 async function createTables(pool) {
+    // Eliminé "Role", creo que no aporta nada generar que seas usuario o prometido.
     await pool.query(`
         CREATE TABLE IF NOT EXISTS users (
             id CHAR(36) PRIMARY KEY,
@@ -37,7 +38,6 @@ async function createTables(pool) {
             country VARCHAR(255),
             avatarUrl VARCHAR(255),
             gender ENUM('Male', 'Female', 'Non-Binary'),
-            role ENUM('couple', 'user') DEFAULT 'user',
             admin BOOLEAN DEFAULT false NOT NULL,
             acceptedTOS BOOLEAN NOT NULL,
             createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

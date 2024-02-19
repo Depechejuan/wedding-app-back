@@ -2,7 +2,7 @@
 
 const sendError = (res, err, data) => {
     // Añade status como argumento
-    console.error(err);
+    console.error("CONSOLE ERROR ", err);
     res.status(err.status).json({
         success: false,
         error: {

@@ -14,8 +14,6 @@ module.exports = {
             const URL = `${idWedding}/${fileName}`;
             return URL;
         } catch (err) {
-            console.log(err);
-            console.error(err);
             throw savePhotoError();
         }
     },

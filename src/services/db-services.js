@@ -17,7 +17,7 @@ module.exports = {
 
     async getUserById(idUser) {
         const statement = `
-        SELECT id, email, firstName, lastName, birthDate, city, country, avatarUrl, gender, role
+        SELECT id, email, firstName, lastName, birthDate, city, country, avatarUrl, gender
         FROM users
         WHERE id = ?`;
         const [rows] = await db.execute(statement, [idUser]);
@@ -88,7 +88,7 @@ module.exports = {
     async editUser(idUser, data) {
         const statement = `
             UPDATE users
-                SET name = ?, lastName = ?, birthday = ?, country = ?, city = ?, avatarURL = ?, role = ?, modifiedAt = ?
+                SET name = ?, lastName = ?, birthday = ?, country = ?, city = ?, avatarURL = ?, modifiedAt = ?
             WHERE id = ?`;
         const [rows] = await db.execute(statement, [
             data.name ?? null,
@@ -97,7 +97,6 @@ module.exports = {
             data.country ?? null,
             data.city ?? null,
             data.avatarURL ?? null,
-            data.role ?? null,
             data.modifiedAt,
             idUser,
         ]);

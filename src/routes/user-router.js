@@ -1,6 +1,9 @@
 "use strict";
-
+// Librerias
 const { Router, json } = require("express");
+const { body, validationResult } = require("express-validator");
+
+// Utils
 const { register } = require("../controllers/users/register");
 const { sendResponse } = require("../utils/send-response");
 const { sendError } = require("../utils/send-error");
@@ -14,17 +17,32 @@ const {
 const { createWedding } = require("../controllers/users/create-wedding");
 const { checkPartner } = require("../controllers/users/check-partner");
 const { registerForce } = require("../controllers/users/register-force");
+const { dataInvalid } = require("../services/error-services");
 
 const router = Router();
 
-router.post("/register", json(), async (req, res) => {
-    try {
-        const result = await register(req.body);
-        sendResponse(res, result);
-    } catch (err) {
-        sendError(res, err);
+router.post(
+    "/register",
+    json(),
+    [
+        body("email").isEmail().normalizeEmail(),
+        body("password").isLength({ min: 6 }),
+        body("acceptedTOS").isBoolean().toBoolean(),
+    ],
+    async (req, res) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            const err = dataInvalid();
+            return sendError(res, err, errors.errors);
+        }
+        try {
+            const result = await register(req.body);
+            sendResponse(res, result);
+        } catch (err) {
+            sendError(res, err);
+        }
     }
-});
+);
 
 router.post("/login", json(), async (req, res) => {
     try {

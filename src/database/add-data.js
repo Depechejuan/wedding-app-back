@@ -13,20 +13,9 @@ async function addData(pool) {
 
     console.log("Creating Admin User");
     await pool.query(
-        "INSERT INTO users (id, email, password, birthDate, city, country, gender, role, admin, acceptedTOS) " +
-            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-        [
-            id,
-            adminUser,
-            hashedPass,
-            birthday,
-            city,
-            country,
-            "Male",
-            "couple",
-            true,
-            true,
-        ]
+        "INSERT INTO users (id, email, password, birthDate, city, country, gender, admin, acceptedTOS) " +
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        [id, adminUser, hashedPass, birthday, city, country, "Male", true, true]
     );
 }
 

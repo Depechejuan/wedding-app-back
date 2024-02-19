@@ -10,6 +10,15 @@ module.exports = {
         };
     },
 
+    dataInvalid() {
+        return {
+            success: false,
+            status: 400,
+            code: "DATA_INVALID",
+            message: "The data you provide isn't valid",
+        };
+    },
+
     invalidCredentials() {
         return {
             success: false,

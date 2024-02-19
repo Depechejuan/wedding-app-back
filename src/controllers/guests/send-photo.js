@@ -12,7 +12,6 @@ module.exports = {
             const URL = await saveFile(idWedding, idUser, idPhoto, photo);
             console.log(URL);
             await savePhoto(idPhoto, idWedding, URL);
-
             const savedPhoto = { idPhoto, idWedding, URL };
             return savedPhoto;
         } catch (err) {
