@@ -44,14 +44,27 @@ router.post(
     }
 );
 
-router.post("/login", json(), async (req, res) => {
-    try {
-        const token = await login(req.body);
-        sendResponse(res, token);
-    } catch (err) {
-        sendError(res, err);
+router.post(
+    "/login",
+    json(),
+    [
+        body("email").isEmail().normalizeEmail(),
+        body("password").isLength({ min: 6 }),
+    ],
+    async (req, res) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            const err = dataInvalid();
+            return sendError(res, err, errors.errors);
+        }
+        try {
+            const token = await login(req.body);
+            sendResponse(res, token);
+        } catch (err) {
+            sendError(res, err);
+        }
     }
-});
+);
 
 /*
     This endpoints manage:
@@ -61,29 +74,46 @@ router.post("/login", json(), async (req, res) => {
     
 */
 
-router.post("/controlpanel/create", authGuard, async (req, res) => {
-    try {
-        const checkWedding = await weddingData(req.currentuser.id);
-        if (checkWedding) {
-            sendResponse(res, checkWedding);
-            return;
+router.post(
+    "/controlpanel/create",
+    authGuard,
+    [
+        body("email").isEmail().normalizeEmail(),
+        body("weddingDate")
+            .isDate()
+            .withMessage(
+                "weddingDate debe ser una fecha válida en formato YYYY-MM-DD"
+            ),
+    ],
+    async (req, res) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            const err = dataInvalid();
+            return sendError(res, err, errors.errors);
         }
-        let partner = await checkPartner(req.body.email);
-        if (!partner) {
-            console.log("register user invited");
-            partner = await registerForce(req.body.email);
-        }
-        const wedding = await createWedding(
-            req.currentuser.id,
-            partner.id,
-            req.body.weddingDate
-        );
+        try {
+            const checkWedding = await weddingData(req.currentuser.id);
+            if (checkWedding) {
+                sendResponse(res, checkWedding);
+                return;
+            }
+            let partner = await checkPartner(req.body.email);
+            if (!partner) {
+                console.log("register user invited");
+                partner = await registerForce(req.body.email);
+            }
+            const wedding = await createWedding(
+                req.currentuser.id,
+                partner.id,
+                req.body.weddingDate
+            );
 
-        sendResponse(res, wedding);
-    } catch (err) {
-        sendError(res, err);
+            sendResponse(res, wedding);
+        } catch (err) {
+            sendError(res, err);
+        }
     }
-});
+);
 
 router.get("/controlpanel", authGuard, json(), async (req, res) => {
     try {
