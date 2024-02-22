@@ -172,8 +172,6 @@ router.get("/controlpanel/getwedding", authGuard, async (req, res) => {
 router.put("/controlpanel/user/:id", authGuard, async (req, res) => {
     const idUser = req.params.id;
     const data = req.body;
-    console.log(idUser);
-    console.log(data);
     const update = await editUser(idUser, data);
 
     sendResponse(res, update);
@@ -182,8 +180,6 @@ router.put("/controlpanel/user/:id", authGuard, async (req, res) => {
 router.put("/controlpanel/user/:id/pass", authGuard, async (req, res) => {
     const idUser = req.params.id;
     const pass = req.body.password;
-    console.log(idUser);
-    console.log(pass);
     const update = await editPass(idUser, pass);
 
     sendResponse(res, update);
