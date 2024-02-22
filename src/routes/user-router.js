@@ -18,6 +18,8 @@ const { createWedding } = require("../controllers/users/create-wedding");
 const { checkPartner } = require("../controllers/users/check-partner");
 const { registerForce } = require("../controllers/users/register-force");
 const { dataInvalid } = require("../services/error-services");
+const { editUser } = require("../controllers/users/edit-user");
+const { editPass } = require("../controllers/users/edit-password");
 
 const router = Router();
 
@@ -166,9 +168,25 @@ router.get("/controlpanel/getwedding", authGuard, async (req, res) => {
     }
 });
 
-router.get("/user/:id", authGuard, async (req, res) => {
-    // see other users
-    sendResponse(res);
+/* EDIT USER */
+router.put("/controlpanel/user/:id", authGuard, async (req, res) => {
+    const idUser = req.params.id;
+    const data = req.body;
+    console.log(idUser);
+    console.log(data);
+    const update = await editUser(idUser, data);
+
+    sendResponse(res, update);
+});
+
+router.put("/controlpanel/user/:id/pass", authGuard, async (req, res) => {
+    const idUser = req.params.id;
+    const pass = req.body.password;
+    console.log(idUser);
+    console.log(pass);
+    const update = await editPass(idUser, pass);
+
+    sendResponse(res, update);
 });
 
 module.exports = router;

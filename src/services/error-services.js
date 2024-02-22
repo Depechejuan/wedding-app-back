@@ -100,4 +100,14 @@ module.exports = {
             message: "The server couldn't process the request properly.",
         };
     },
+
+    samePassword() {
+        return {
+            success: false,
+            status: 304,
+            code: "SAME_PASSWORD",
+            message:
+                "You can't change the password if you enter the old one. Please create a new password.",
+        };
+    },
 };

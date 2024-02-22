@@ -5,7 +5,6 @@ const { savePhotoError } = require("./error-services");
 module.exports = {
     async saveFile(idWedding, idUser, idPhoto, photo) {
         try {
-            console.log(photo);
             const directory = path.join(__dirname, `../../public/${idWedding}`);
             await fs.mkdir(directory, { recursive: true });
             const fileName = `${idUser} - ${idPhoto}.webp`;

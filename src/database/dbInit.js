@@ -36,7 +36,7 @@ async function createTables(pool) {
             birthDate TIMESTAMP,
             city VARCHAR(255),
             country VARCHAR(255),
-            avatarUrl VARCHAR(255),
+            avatarURL VARCHAR(255),
             gender ENUM('Male', 'Female', 'Non-Binary'),
             admin BOOLEAN DEFAULT false NOT NULL,
             acceptedTOS BOOLEAN NOT NULL,

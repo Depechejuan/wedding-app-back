@@ -17,7 +17,7 @@ module.exports = {
 
     async getUserById(idUser) {
         const statement = `
-        SELECT id, email, firstName, lastName, birthDate, city, country, avatarUrl, gender
+        SELECT id, email, password, firstName, lastName, birthDate, city, country, avatarUrl, gender
         FROM users
         WHERE id = ?`;
         const [rows] = await db.execute(statement, [idUser]);
@@ -85,21 +85,37 @@ module.exports = {
     },
 
     // revisar logica
-    async editUser(idUser, data) {
+    async saveEditUser(idUser, data) {
         const statement = `
             UPDATE users
-                SET name = ?, lastName = ?, birthday = ?, country = ?, city = ?, avatarURL = ?, modifiedAt = ?
+                SET firstName = ?, lastName = ?, birthDate = ?, city = ?, country = ?, avatarURL = ?, gender = ?, modifiedAt = ?
             WHERE id = ?`;
         const [rows] = await db.execute(statement, [
-            data.name ?? null,
-            data.lastname ?? null,
-            data.birthday ?? null,
-            data.country ?? null,
+            data.firstName ?? null,
+            data.lastName ?? null,
+            data.birthDate ?? null,
             data.city ?? null,
+            data.country ?? null,
             data.avatarURL ?? null,
+            data.gender ?? null,
             data.modifiedAt,
             idUser,
         ]);
+        return rows;
+    },
+
+    async getCryptoPass(idUser) {
+        const statement = `SELECT password FROM users WHERE id = ?`;
+        const [rows] = await db.execute(statement, [idUser]);
+        return rows[0];
+    },
+
+    async saveNewPass(idUser, newPass) {
+        const statement = `
+        UPDATE users
+            SET password = ?
+        WHERE id = ?`;
+        const [rows] = await db.execute(statement, [newPass, idUser]);
         return rows;
     },
 };
